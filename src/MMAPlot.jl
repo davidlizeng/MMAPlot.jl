@@ -1,5 +1,5 @@
 module MMAPlot
 
-# package code goes here
+include("plot.jl")
 
-end # module
+end

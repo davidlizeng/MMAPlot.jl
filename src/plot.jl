@@ -103,14 +103,20 @@ function save_figure(name; width=8inch, height=6inch, format="svg", figure=nothi
 end
 
 function generic_plot(x, y, geom, color_string, label, figure)
-  figure = get_figure(figure)
-  if color_string == nothing
-    color_string = color_rotation[length(figure.layers) % length(color_rotation) + 1]
+  if length(x) != length(y)
+    error("x and y need to have equal length.")
   end
-  theme = Theme(default_color = color(color_string))
+  figure = get_figure(figure)
+  parsed_color = nothing
+  if color_string == nothing
+    parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]
+  else
+    parsed_color = parse(Colorant, color_string)
+  end
+  theme = Theme(default_color = color(parsed_color))
   new_layer = Gadfly.layer(x=x, y=y, geom, theme)
   append!(figure.layers, new_layer)
-  push!(figure.colors, color_string)
+  push!(figure.colors, parsed_color)
   push!(figure.labels, label)
   return nothing
 end

@@ -65,7 +65,7 @@ function get_figure(figure)
   return figure
 end
 
-function new_figure(; title="", xlabel="x", ylabel="y", legend=false, legend_title="")
+function new_figure(; title="", xlabel="", ylabel="", legend=false, legend_title="")
   figure = Figure(title, xlabel, ylabel, legend, legend_title)
   global cur_figure = figure
   return figure

@@ -1,3 +1,5 @@
+using Gadfly
+
 module MMAPlot
 
 include("plot.jl")

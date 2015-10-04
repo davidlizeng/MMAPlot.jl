@@ -24,13 +24,54 @@
 
 <p>MMAPlot is a package that wraps around the <a href="http://gadflyjl.org/">Gadfly</a> plotting library to make plotting syntax easier.</p>
 
+<h2>
+<a id="mmaplot-demos" class="anchor" href="#mmaplot-demos" aria-hidden="true"><span class="octicon octicon-link"></span></a>MMAPlot Demos</h2>
+
 <h3>
-<a id="demo-of-mmaplot" class="anchor" href="#demo-of-mmaplot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demo of MMAPlot</h3>
+<a id="creating-and-showing-a-basic-plot" class="anchor" href="#creating-and-showing-a-basic-plot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating and showing a basic plot</h3>
+
+<pre><code># include the MMAPlot.jl package
+using MMAPlot
+# create a new figure to plot on
+new_figure()
+# plot a basic line: spcify the points on the x axis, and the points on the y axis
+line_plot(1:10, 1:10)
+# show the plot
+show_figure()
+</code></pre>
 
 <p><img src="images/basic_plot.png" alt="Basic Plot"></p>
 
 <h3>
-<a id="mmaplot-functions" class="anchor" href="#mmaplot-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>MMAPlot Functions</h3>
+<a id="adding-plots-titles-and-labels" class="anchor" href="#adding-plots-titles-and-labels" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding plots, titles, and labels</h3>
+
+<pre><code># add a scatter plot to the figure
+scatter_plot(1:10, 10:-1:1)
+# add a title, x axis label, and y axis label
+set_title("Awesome Plot")
+set_xlabel("x")
+set_ylabel("y")
+# run show_figure again to update the plot
+show_figure()
+</code></pre>
+
+<p><img src="images/labeled_plot.png" alt="Labeled Plot"></p>
+
+<h3>
+<a id="creating-a-plot-with-a-legend" class="anchor" href="#creating-a-plot-with-a-legend" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a plot with a legend</h3>
+
+<pre><code># create a new figure to plot on, with a title
+new_figure(title="Legendary Plot")
+# plot two lines with labels
+line_plot(1:0.1:10, sin(1:0.1:10), label="sin")
+line_plot(1:0.1:10, cos(1:0.1:10), label="cos")
+# display the legend
+set_legend(true)
+# show the figure
+show_figure()
+</code></pre>
+
+<p><img src="images/legend_plot.png" alt="Legend Plot"></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/davidlizeng/MMAPlot.jl">MMAPlot.jl</a> is maintained by <a href="https://github.com/davidlizeng">davidlizeng</a>.</span>

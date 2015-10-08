@@ -36,13 +36,18 @@ function build_plot(figure::Figure)
     error("No plots have been defined for current figure")
   end
   p = nothing
-  if figure.legend
+  has_valid_labels = any(figure.labels .!= "")
+
+  if figure.legend && has_valid_labels
+    valid_labels = String[]
     p = Gadfly.plot(
       figure.layers,
       Guide.title(figure.title),
       Guide.xlabel(figure.xlabel),
       Guide.ylabel(figure.ylabel),
-      Guide.manual_color_key(figure.legend_title, figure.labels, figure.colors)
+      Guide.manual_color_key(figure.legend_title,
+          figure.labels[figure.labels .!= ""],
+          figure.colors[figure.labels .!= ""])
     )
   else
     p = Gadfly.plot(

@@ -27,7 +27,7 @@ type Figure
   legend_title::String
 
   function Figure(title::String, xlabel::String, ylabel::String, legend::Bool, legend_title::String)
-    return new(Gadfly.Layer[], String[], String[], title, xlabel, ylabel, legend, legend_title)
+    return new(Gadfly.Layer[], String[], RGB{U8}[], title, xlabel, ylabel, legend, legend_title)
   end
 end
 

@@ -108,7 +108,7 @@ function generic_plot(x, y, geom, color_string, label, figure)
   figure = get_figure(figure)
   parsed_color = nothing
   if color_string == nothing # if no color is specified
-    if label != "" && haskey(figure.legend_entries,label) # and we already have a label, then use the previous color assigned
+    if haskey(figure.legend_entries,label) # and we already have a label, then use the previous color assigned
       parsed_color = figure.legend_entries[label]
     else # otherwise generate a new color
       parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]

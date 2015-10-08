@@ -108,8 +108,9 @@ function generic_plot(x, y, geom, color_string, label, figure)
   end
   figure = get_figure(figure)
   parsed_color = nothing
+  is_new_label = (label == "" || !in(label, figure.labels))
   if color_string == nothing # if no color is specified
-    if in(label, figure.labels) # and we already have a label, then use the previous color assigned
+    if !is_new_label # and we already have a label, then use the previous color assigned
       parsed_color = figure.colors[figure.labels .== label][1]
     else # otherwise generate a new color
       parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]
@@ -120,7 +121,7 @@ function generic_plot(x, y, geom, color_string, label, figure)
   theme = Theme(default_color = color(parsed_color))
   new_layer = Gadfly.layer(x=x, y=y, geom, theme)
   append!(figure.layers, new_layer)
-  if !in(label, figure.labels) # if its a new label
+  if is_new_label || color_string != nothing # if its a new label or the color string was specified
     push!(figure.colors, parsed_color)
     push!(figure.labels, label)
   end

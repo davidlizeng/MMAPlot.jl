@@ -18,8 +18,7 @@ color_rotation = [
 
 type Figure
   layers::Array{Gadfly.Layer, 1}
-  colors::Array{RGB{U8}, 1}
-  labels::Array{String, 1}
+  legend_entries::Dict{String,RGB{U8}}
   title::String
   xlabel::String
   ylabel::String
@@ -27,7 +26,7 @@ type Figure
   legend_title::String
 
   function Figure(title::String, xlabel::String, ylabel::String, legend::Bool, legend_title::String)
-    return new(Gadfly.Layer[], String[], String[], title, xlabel, ylabel, legend, legend_title)
+    return new(Gadfly.Layer[], Dict{String,RGB{U8}}(), title, xlabel, ylabel, legend, legend_title)
   end
 end
 
@@ -42,7 +41,7 @@ function build_plot(figure::Figure)
       Guide.title(figure.title),
       Guide.xlabel(figure.xlabel),
       Guide.ylabel(figure.ylabel),
-      Guide.manual_color_key(figure.legend_title, figure.labels, figure.colors)
+      Guide.manual_color_key(figure.legend_title, collect(keys(figure.legend_entries)), collect(values(figure.legend_entries)))
     )
   else
     p = Gadfly.plot(
@@ -108,10 +107,9 @@ function generic_plot(x, y, geom, color_string, label, figure)
   end
   figure = get_figure(figure)
   parsed_color = nothing
-  is_new_label = (label == "" || !in(label, figure.labels))
   if color_string == nothing # if no color is specified
-    if !is_new_label # and we already have a label, then use the previous color assigned
-      parsed_color = figure.colors[figure.labels .== label][1]
+    if label != "" && haskey(figure.legend_entries,label) # and we already have a label, then use the previous color assigned
+      parsed_color = figure.legend_entries[label]
     else # otherwise generate a new color
       parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]
     end
@@ -121,10 +119,7 @@ function generic_plot(x, y, geom, color_string, label, figure)
   theme = Theme(default_color = color(parsed_color))
   new_layer = Gadfly.layer(x=x, y=y, geom, theme)
   append!(figure.layers, new_layer)
-  if is_new_label || color_string != nothing # if its a new label or the color string was specified
-    push!(figure.colors, parsed_color)
-    push!(figure.labels, label)
-  end
+  figure.legend_entries[label] = parsed_color
   return nothing
 end
 

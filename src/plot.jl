@@ -18,7 +18,8 @@ color_rotation = [
 
 type Figure
   layers::Array{Gadfly.Layer, 1}
-  legend_entries::Dict{String,RGB{U8}}
+  colors::Array{RGB{U8}, 1}
+  labels::Array{String, 1}
   title::String
   xlabel::String
   ylabel::String
@@ -26,7 +27,7 @@ type Figure
   legend_title::String
 
   function Figure(title::String, xlabel::String, ylabel::String, legend::Bool, legend_title::String)
-    return new(Gadfly.Layer[], Dict{String,RGB{U8}}(), title, xlabel, ylabel, legend, legend_title)
+    return new(Gadfly.Layer[], String[], String[], title, xlabel, ylabel, legend, legend_title)
   end
 end
 
@@ -41,7 +42,7 @@ function build_plot(figure::Figure)
       Guide.title(figure.title),
       Guide.xlabel(figure.xlabel),
       Guide.ylabel(figure.ylabel),
-      Guide.manual_color_key(figure.legend_title, collect(keys(figure.legend_entries)), collect(values(figure.legend_entries)))
+      Guide.manual_color_key(figure.legend_title, figure.labels, figure.colors)
     )
   else
     p = Gadfly.plot(
@@ -107,19 +108,16 @@ function generic_plot(x, y, geom, color_string, label, figure)
   end
   figure = get_figure(figure)
   parsed_color = nothing
-  if color_string == nothing # if no color is specified
-    if haskey(figure.legend_entries,label) # and we already have a label, then use the previous color assigned
-      parsed_color = figure.legend_entries[label]
-    else # otherwise generate a new color
-      parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]
-    end
-  else # if a color was specified, use that one
+  if color_string == nothing
+    parsed_color = color_rotation[length(figure.layers) % length(color_rotation) + 1]
+  else
     parsed_color = parse(Colorant, color_string)
   end
   theme = Theme(default_color = color(parsed_color))
   new_layer = Gadfly.layer(x=x, y=y, geom, theme)
   append!(figure.layers, new_layer)
-  figure.legend_entries[label] = parsed_color
+  push!(figure.colors, parsed_color)
+  push!(figure.labels, label)
   return nothing
 end
 

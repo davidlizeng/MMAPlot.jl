@@ -17,9 +17,9 @@ supported_formats = {
 
 if cairo_supported
   cairo_supported_formats = {
-    "ps" =>  PS
-    "pdf" => PDF
-    "png" => PNG
+    "ps" =>  PS,
+    "pdf" => PDF,
+    "png" => PNG,
   }
 end
 

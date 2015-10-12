@@ -11,6 +11,18 @@ global cairo_supported = Pkg.installed("Cairo") != nothing
 # generating easily-distinguishable colors
 color_rotation = distinguishable_colors(8, colorant"blue");
 
+supported_formats = {
+  "svg" => SVG
+}
+
+if cairo_supported
+  cairo_supported_formats = {
+    "ps" =>  PS
+    "pdf" => PDF
+    "png" => PNG
+  }
+end
+
 type Figure
   layers::Array{Gadfly.Layer, 1}
   legend_entries::Dict{String,RGB{U8}}
@@ -76,22 +88,12 @@ show_figure(figure) = show_figure(figure=figure)
 function save_figure(name; width=8inch, height=6inch, format="svg", figure=nothing)
   figure = get_figure(figure)
   p = build_plot(figure)
-  if format == "svg"
-    draw(SVG(name, width, height), p)
-  elseif format == "pdf" || format == "ps" || format == "png"
-    if cairo_supported
-      if format == "pdf"
-        draw(PDF(name, width, height), p)
-      elseif format == "ps"
-        draw(PS(name, width, height), p)
-      else
-        draw(PNG(name, width, height), p)
-      end
-    else
-      error("The Cairo package needs to be installed to write images in pdf, ps, or png format.")
-    end
+  if format in keys(supported_formats)
+    draw(supported_formats[format](name, width, height), p)
+  elseif cairo_supported && format in keys(cairo_supported_formats)
+      draw(cairo_supported_formats[format](name, width, height), p)
   else
-    error("Unrecognized image format. Please use \"svg\" (default), \"png\", \"pdf\", or \"ps\".")
+    error("Unable to write '$format' file. Please use 'svg' (default), or install Cairo and use 'png', 'pdf', or 'ps'.")
   end
   return figure
 end

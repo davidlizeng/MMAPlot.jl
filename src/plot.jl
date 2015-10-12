@@ -25,15 +25,15 @@ end
 
 type Figure
   layers::Array{Gadfly.Layer, 1}
-  legend_entries::Dict{String,RGB{U8}}
   title::String
   xlabel::String
   ylabel::String
-  legend::Bool
+  has_legend::Bool
+  legend::Dict{RGB{U8},String}
   legend_title::String
-
-  function Figure(title::String, xlabel::String, ylabel::String, legend::Bool, legend_title::String)
-    return new(Gadfly.Layer[], Dict{String,RGB{U8}}(), title, xlabel, ylabel, legend, legend_title)
+  
+  function Figure(title::String, xlabel::String, ylabel::String, has_legend::Bool, legend_title::String)
+    return new(Gadfly.Layer[], title, xlabel, ylabel, has_legend, Dict{RGB{U8},String}(), legend_title)
   end
 end
 
@@ -42,13 +42,15 @@ function build_plot(figure::Figure)
     error("No plots have been defined for current figure")
   end
   p = nothing
-  if figure.legend
+  if figure.has_legend
     p = Gadfly.plot(
       figure.layers,
       Guide.title(figure.title),
       Guide.xlabel(figure.xlabel),
       Guide.ylabel(figure.ylabel),
-      Guide.manual_color_key(figure.legend_title, collect(keys(figure.legend_entries)), collect(values(figure.legend_entries)))
+      Guide.manual_color_key(figure.legend_title, 
+                             collect(values(figure.legend)), 
+                             collect(keys(figure.legend)))
     )
   else
     p = Gadfly.plot(
@@ -71,8 +73,8 @@ function get_figure(figure)
   return figure
 end
 
-function new_figure(; title="", xlabel="", ylabel="", legend=false, legend_title="")
-  figure = Figure(title, xlabel, ylabel, legend, legend_title)
+function new_figure(; title="", xlabel="", ylabel="", has_legend=false, legend_title="")
+  figure = Figure(title, xlabel, ylabel, has_legend, legend_title)
   global cur_figure = figure
   return figure
 end
@@ -145,9 +147,9 @@ function set_ylabel(ylabel::String; figure=nothing)
   figure.ylabel = ylabel
 end
 
-function set_legend(on::Bool; title=nothing, figure=nothing)
+function set_legend(has_legend::Bool; title=nothing, figure=nothing)
   figure = get_figure(figure)
-  figure.legend = on
+  figure.has_legend = has_legend 
   if title != nothing
     figure.legend_title = title
   end

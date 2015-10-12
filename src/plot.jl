@@ -7,14 +7,9 @@ export set_xlabel, set_ylabel, set_title, set_legend
 global cur_figure = nothing
 global cairo_supported = Pkg.installed("Cairo") != nothing
 
-color_rotation = [
-  colorant"blue",
-  colorant"red",
-  colorant"green",
-  colorant"orange",
-  colorant"purple",
-  colorant"gold"
-];
+# use Colors' built-in utility for 
+# generating easily-distinguishable colors
+color_rotation = distinguishable_colors(8, colorant"blue");
 
 type Figure
   layers::Array{Gadfly.Layer, 1}
